@@ -3,10 +3,10 @@ services:
   repo: https://github.com/coutoluizf/livekit-walljobs-agent
 
   # Change this to the path containing your Dockerfile
-  # rootDir: python-agent-example-app
+  rootDir: python-agent-example-app
 
   name: livekit-walljobs-agent
-  # runtime: image
+  runtime: docker
 
   # Free plan is not available for private services
   plan: starter
