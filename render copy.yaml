@@ -2,8 +2,8 @@ services:
 - type: pserv
   repo: https://github.com/coutoluizf/livekit-walljobs-agent
 
-  # Root directory where Dockerfile is located
-  rootDir: .
+  # Change this to the path containing your Dockerfile
+  rootDir: python-agent-example-app
 
   name: livekit-walljobs-agent
   runtime: docker
