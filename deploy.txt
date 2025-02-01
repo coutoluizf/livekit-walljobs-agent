@@ -1,0 +1,12 @@
+# Deploy local
+
+# Build the Docker image
+docker build --no-cache -t livekit-walljobs-agent .
+docker build -t livekit-walljobs-agent .
+
+# Run the Docker container
+docker run \
+  -it \
+  -e NODE_ENV=development \
+  -e AGENTS_LOG_LEVEL=debug \
+  livekit-walljobs-agent
