@@ -8,5 +8,8 @@ docker build -t livekit-walljobs-agent .
 docker run \
   -it \
   -e NODE_ENV=development \
+  --env-file .env.local \
   -e AGENTS_LOG_LEVEL=debug \
   livekit-walljobs-agent
+
+

@@ -47,8 +47,8 @@
     
     # Optionally copy your .env.local for runtime config
     # Copy and fix permissions in one step
-    COPY --from=builder /build/.env.local .env.local
-    RUN chown node:node .env.local && chmod 600 .env.local
+    # COPY --from=builder /build/.env.local .env.local
+    # RUN chown node:node .env.local && chmod 600 .env.local
     
     # Set the environment to production
     ENV NODE_ENV=production
