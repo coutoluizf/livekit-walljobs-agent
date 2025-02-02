@@ -19,7 +19,7 @@ import { z } from 'zod';
 
 
 const instructions: string = `
-# Instruções Gerais
+Simulação de Entrevista com IA
 Você é a Ana, um assistente de IA especializado em simular entrevistas de emprego para diferentes posições em empresas. 
 Sua função é simular o papel de um entrevistador humano, conduzindo uma entrevista realista, interativa e profissional com o usuário.
 
@@ -66,52 +66,64 @@ if (process.env.NODE_ENV == 'development') {
 // Define the main agent configuration and behavior
 export default defineAgent({
   entry: async (ctx: JobContext) => {
-    // Connect to LiveKit room and wait for participant
-    await ctx.connect();
-    console.log('waiting for participant');
-    const participant = await ctx.waitForParticipant();
-    console.log(`starting assistant example agent for ${participant.identity}`);
+    try {
+      console.log('Starting agent...');
+      // Connect to LiveKit room and wait for participant
+      await ctx.connect();
+      console.log('waiting for participant');
+      const participant = await ctx.waitForParticipant();
+      console.log(`starting assistant example agent for ${participant.identity}`);
 
-    // Initialize OpenAI model with custom instructions for job interview simulation
-    const model = new openai.realtime.RealtimeModel({
-      instructions: instructions,
-    });
+      // gpt-4o-realtime-preview-2024-10-01
+      const modelName: string = 'gpt-4o-realtime-preview-2024-12-17';
+      // Initialize OpenAI model with custom instructions for job interview simulation
+      const model = new openai.realtime.RealtimeModel({
+        instructions: instructions,
+        // model: modelName,
+      });
 
-    // Define available functions for the agent to use
-    const fncCtx: llm.FunctionContext = {
-      // Weather function implementation
-      weather: {
-        description: 'Get the weather in a location',
-        parameters: z.object({
-          location: z.string().describe('The location to get the weather for'),
-        }),
-        // Function to fetch weather data from wttr.in API
-        execute: async ({ location }) => {
-          console.debug(`executing weather function for ${location}`);
-          const response = await fetch(`https://wttr.in/${location}?format=%C+%t`);
-          if (!response.ok) {
-            throw new Error(`Weather API returned status: ${response.status}`);
-          }
-          const weather = await response.text();
-          return `The weather in ${location} right now is ${weather}.`;
+      // Define available functions for the agent to use
+      const fncCtx: llm.FunctionContext = {
+        // Weather function implementation
+        weather: {
+          description: 'Get the weather in a location',
+          parameters: z.object({
+            location: z.string().describe('The location to get the weather for'),
+          }),
+          // Function to fetch weather data from wttr.in API
+          execute: async ({ location }) => {
+            console.debug(`executing weather function for ${location}`);
+            const response = await fetch(`https://wttr.in/${location}?format=%C+%t`);
+            if (!response.ok) {
+              throw new Error(`Weather API returned status: ${response.status}`);
+            }
+            const weather = await response.text();
+            return `The weather in ${location} right now is ${weather}.`;
+          },
         },
-      },
-    };
+      };
 
-    // Initialize multimodal agent with model and function context
-    const agent = new multimodal.MultimodalAgent({ model, fncCtx });
-    const session = await agent
-      .start(ctx.room, participant)
-      .then((session) => session as openai.realtime.RealtimeSession);
+      // Initialize multimodal agent with model and function context
+      const agent = new multimodal.MultimodalAgent({ model, fncCtx });
+      const session = await agent
+        .start(ctx.room, participant)
+        .then((session) => session as openai.realtime.RealtimeSession);
 
-    // Create initial greeting message
-    // session.conversation.item.create(llm.ChatMessage.create({
-    //   role: llm.ChatRole.ASSISTANT,
-    //   text: initialAssistantMessage,
-    // }));
+      // Create initial greeting message
+      // session.conversation.item.create(llm.ChatMessage.create({
+      //   role: llm.ChatRole.ASSISTANT,
+      //   text: initialAssistantMessage,
+      // }));
 
-    // Start the response handling
-    session.response.create();
+      // Start the response handling
+      session.response.create();
+
+    } catch (err) {
+      console.log("Error in agent entry:", err);
+      console.error("Error in agent entry:", err);
+      throw err; // ensures the worker logs a fatal error, but now with details
+    }
+
   },
 });
 

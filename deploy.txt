@@ -13,3 +13,5 @@ docker run \
   livekit-walljobs-agent
 
 
+# Run local without container
+node dist/agent.js dev
