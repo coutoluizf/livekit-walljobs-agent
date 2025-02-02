@@ -17,6 +17,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
+if (!process.env.PORT) {
+  process.env.PORT = '44739'; // fallback port; Render will provide one in production
+}
 
 const instructions: string = `
 Simulação de Entrevista com IA
